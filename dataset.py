@@ -22,8 +22,8 @@ class ImageDataset(Dataset):
         do_augment: bool = True,
         do_transform: bool = True,
         do_normalize: bool = True,
-        sort_names=False,
-        has_subdir: bool = True,
+        sort_names=True,
+        has_subdir: bool = False,
     ):
         super().__init__()
         self.folder = folder
@@ -41,7 +41,7 @@ class ImageDataset(Dataset):
                 for p in Path(f'{folder}').glob(f'*.{ext}')
             ]
         if sort_names:
-            self.paths = sorted(self.paths)
+          self.paths = sorted(self.paths, key=lambda p: p.name.lower())
 
         transform = [
             transforms.Resize(image_size),
