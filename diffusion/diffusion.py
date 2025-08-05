@@ -101,7 +101,7 @@ class SpacedDiffusionBeatGans(GaussianDiffusionBeatGans):
                                        **kwargs)
 
     def custom_training_losses(self, model: Model, *args, **kwargs):  # pylint: disable=signature-differs
-        return super().training_losses(self._wrap_model(model), *args,
+        return super().custom_training_losses(self._wrap_model(model), *args,
                                        **kwargs)
 
     def condition_mean(self, cond_fn, *args, **kwargs):
