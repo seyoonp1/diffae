@@ -873,11 +873,11 @@ def is_time(num_samples, every, step_size):
     return num_samples - closest < step_size
 
 
-def train(conf: TrainConfig, gpus, nodes=1, mode: str = 'train'):
+def train(conf: TrainConfig, model_ref, gpus, nodes=1, mode: str = 'train'):
     print('conf:', conf.name)
     # assert not (conf.fp16 and conf.grad_clip > 0
     #             ), 'pytorch lightning has bug with amp + gradient clipping'
-    model = LitModel(conf)
+    model = LitModel(conf,model_ref)
 
     if not os.path.exists(conf.logdir):
         os.makedirs(conf.logdir)
