@@ -196,68 +196,29 @@ class GaussianDiffusionBeatGans:
         :return: a dict with the key "loss" containing a tensor of shape [N].
                  Some mean or variance settings may also have other keys.
         """
-        if model_kwargs is None:
-            model_kwargs = {}
         if noise is None:
             noise = th.randn_like(x_start)
 
-        x_t = self.q_sample(x_start, t, noise=noise)
-
-        terms = {'x_t': x_t}
-
-        if self.loss_type in [
-                LossType.mse,
-                LossType.l1,
-        ]:
-            with autocast(self.conf.fp16):
-                # x_t is static wrt. to the diffusion process
-                model_forward = model.forward(x=x_t.detach(),
-                                              t=self._scale_timesteps(t),
-                                              x_start=x_start.detach(),
-                                              **model_kwargs)
-            model_output = model_forward.pred
-
-            _model_output = model_output
-            if self.conf.train_pred_xstart_detach:
-                _model_output = _model_output.detach()
-            # get the pred xstart
-            p_mean_var = self.p_mean_variance(
-                model=DummyModel(pred=_model_output),
-                # gradient goes through x_t
-                x=x_t,
-                t=t,
-                clip_denoised=False)
-            terms['pred_xstart'] = p_mean_var['pred_xstart']
-
-            # model_output = model(x_t, self._scale_timesteps(t), **model_kwargs)
-
-            target_types = {
-                ModelMeanType.eps: noise,
-            }
-            target = target_types[self.model_mean_type]
-            assert model_output.shape == target.shape == x_start.shape
-
-            if self.loss_type == LossType.mse:
-                if self.model_mean_type == ModelMeanType.eps:
-                    # (n, c, h, w) => (n, )
-                    terms["mse"] = mean_flat((target - model_output)**2)
-                else:
-                    raise NotImplementedError()
-            elif self.loss_type == LossType.l1:
-                # (n, c, h, w) => (n, )
-                terms["mse"] = mean_flat((target - model_output).abs())
-            else:
-                raise NotImplementedError()
-
-            if "vb" in terms:
-                # if learning the variance also use the vlb loss
-                terms["loss"] = terms["mse"] + terms["vb"]
-            else:
-                terms["loss"] = terms["mse"]
-        else:
-            raise NotImplementedError(self.loss_type)
-
-        return terms
+                """
+        Custom training loss based on DDIM-reconstructed output vs ground truth.
+        """
+        if model_kwargs is None:
+            model_kwargs = {}
+    
+        # Step 1: Encode x0 into latent noise xT
+        with th.no_grad():  # frozen encoder
+            xT = model.encode_stochastic(x_start)   # shape: (B, C, H, W)
+    
+        # Step 2: Get semantic vector from new encoder
+        z_sem = model.encode_semantic(x_start)      # shape: (B, D)
+    
+        # Step 3: Decode (xT, z_sem) into y0_ddim using DDIM
+        y0_ddim = model.decode_ddim(xT, z_sem)      # your custom implementation
+    
+        # Step 4: Compute L2 loss with ground truth line-drawing
+        loss = th.nn.functional.mse_loss(y0_ddim, y0_gt)
+    
+        return {'loss': loss}
 
     def sample(self,
                model: Model,
