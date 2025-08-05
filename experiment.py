@@ -372,7 +372,7 @@ class LitModel(pl.LightningModule):
                 """
                 # with numpy seed we have the problem that the sample t's are related!
                 t, weight = self.T_sampler.sample(len(x_start), x_start.device)
-                losses = self.sampler.training_losses(model=self.model,
+                losses = self.sampler.custom_training_losses(model=self.model,
                                                       x_start=x_start,
                                                       t=t)
             elif self.conf.train_mode.is_latent_diffusion():
