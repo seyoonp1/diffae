@@ -180,7 +180,7 @@ class GaussianDiffusionBeatGans:
 
     def custom_training_losses(self,
                         model: Model,
-                        medel_ref: Model
+                        medel_ref: Model,
                         x_start: th.Tensor,
                         t: th.Tensor,
                         model_kwargs=None,
