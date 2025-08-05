@@ -26,7 +26,7 @@ from renderer import *
 
 
 class LitModel(pl.LightningModule):
-    def __init__(self, conf: TrainConfig):
+    def __init__(self, conf: TrainConfig, model_ref=None):
         super().__init__()
         assert conf.train_mode != TrainMode.manipulate
         if conf.seed is not None:
@@ -35,12 +35,11 @@ class LitModel(pl.LightningModule):
         self.save_hyperparameters(conf.as_dict_jsonable())
 
         self.conf = conf
-
         self.model = conf.make_model_conf().make_model()
         self.ema_model = copy.deepcopy(self.model)
         self.ema_model.requires_grad_(False)
         self.ema_model.eval()
-
+        self.model_ref=model_ref
         model_size = 0
         for param in self.model.parameters():
             model_size += param.data.nelement()
@@ -372,7 +371,7 @@ class LitModel(pl.LightningModule):
                 """
                 # with numpy seed we have the problem that the sample t's are related!
                 t, weight = self.T_sampler.sample(len(x_start), x_start.device)
-                losses = self.sampler.custom_training_losses(model=self.model,
+                losses = self.sampler.custom_training_losses(model=self.model, model_ref=self.model_ref,
                                                       x_start=x_start,
                                                       t=t)
             elif self.conf.train_mode.is_latent_diffusion():
