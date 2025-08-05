@@ -210,10 +210,10 @@ class GaussianDiffusionBeatGans:
             xT = model.encode_stochastic(x_start)   # shape: (B, C, H, W)
     
         # Step 2: Get semantic vector from new encoder
-        z_sem = model.encode_semantic(x_start)      # shape: (B, D)
+        z_sem = model.encode(x_start)      # shape: (B, D)
     
         # Step 3: Decode (xT, z_sem) into y0_ddim using DDIM
-        y0_ddim = model.decode_ddim(xT, z_sem)      # your custom implementation
+        y0_ddim = model.foward(xT, z_sem)      # your custom implementation
     
         # Step 4: Compute L2 loss with ground truth line-drawing
         loss = th.nn.functional.mse_loss(y0_ddim, y0_gt)
