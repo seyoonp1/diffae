@@ -218,7 +218,12 @@ class GaussianDiffusionBeatGans:
         # Step 4: Compute L2 loss with ground truth line-drawing
         loss = th.nn.functional.mse_loss(y0_ddim, y0_gt)
     
-        return {'loss': loss}
+        return {
+            "loss": loss,
+            "y0_ddim": y0_ddim.detach(),  # for visualization if needed
+            "x_T": x_T.detach(),
+            "z_sem": z_sem.detach(),
+        }
 
     def sample(self,
                model: Model,
