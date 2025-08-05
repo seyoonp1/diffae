@@ -180,6 +180,7 @@ class GaussianDiffusionBeatGans:
 
     def custom_training_losses(self,
                         model: Model,
+                        medel_ref: Model
                         x_start: th.Tensor,
                         t: th.Tensor,
                         model_kwargs=None,
@@ -207,7 +208,8 @@ class GaussianDiffusionBeatGans:
     
         # Step 1: Encode x0 into latent noise xT
         with th.no_grad():  # frozen encoder
-            xT = model.encode_stochastic(x_start)   # shape: (B, C, H, W)
+            cond = model.encode(x_start)
+            xT = model.encode_stochastic(x_start, cond, T=250)   # shape: (B, C, H, W)
     
         # Step 2: Get semantic vector from new encoder
         z_sem = model.encode(x_start)      # shape: (B, D)
