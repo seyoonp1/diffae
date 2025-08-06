@@ -302,7 +302,7 @@ class TrainConfig(BaseConfig):
                               crop_d2c=True,
                               **kwargs)
         elif self.data_name == 'custom':
-            return None
+            return PairedImageDataset(root_dir=self.data_path, transform=transform)
         else:
             raise NotImplementedError()
 
