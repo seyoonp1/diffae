@@ -301,6 +301,8 @@ class TrainConfig(BaseConfig):
                               original_resolution=None,
                               crop_d2c=True,
                               **kwargs)
+        elif self.data_name == 'custom':
+            return None
         else:
             raise NotImplementedError()
 
