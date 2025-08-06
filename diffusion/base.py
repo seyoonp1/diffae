@@ -182,6 +182,7 @@ class GaussianDiffusionBeatGans:
                         model: Model,
                         medel_ref: Model,
                         x_start: th.Tensor,
+                        y_0: th.Tensor,
                         t: th.Tensor,
                         model_kwargs=None,
                         noise: th.Tensor = None):
@@ -218,7 +219,7 @@ class GaussianDiffusionBeatGans:
         y0_ddim = model.foward(xT, z_sem)      # your custom implementation
     
         # Step 4: Compute L2 loss with ground truth line-drawing
-        loss = th.nn.functional.mse_loss(y0_ddim, y0_gt)
+        loss = th.nn.functional.mse_loss(y0_ddim, y0)
     
         return {
             "loss": loss,
