@@ -361,7 +361,7 @@ class LitModel(pl.LightningModule):
                     cond = (cond - self.conds_mean.to(
                         self.device)) / self.conds_std.to(self.device)
             else:
-                imgs, idxs = batch['img'], batch['index']
+                imgs, sketch, idxs = batch['img'], batch['sketch'], batch['index']
                 # print(f'(rank {self.global_rank}) batch size:', len(imgs))
                 x_start = imgs
 
@@ -372,7 +372,7 @@ class LitModel(pl.LightningModule):
                 # with numpy seed we have the problem that the sample t's are related!
                 t, weight = self.T_sampler.sample(len(x_start), x_start.device)
                 losses = self.sampler.custom_training_losses(model=self.model, model_ref=self.model_ref,
-                                                      x_start=x_start,
+                                                      x_start=x_start, y_0= sketch,
                                                       t=t)
             elif self.conf.train_mode.is_latent_diffusion():
                 """
