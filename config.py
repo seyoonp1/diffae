@@ -39,6 +39,8 @@ data_paths = {
         'datasets/celeba_anno/CelebAMask-HQ-attribute-anno.txt'),
     'celeba_relight':
     os.path.expanduser('datasets/celeba_hq_light/celeba_light.txt'),
+    'custom': '/content/data'
+    
 }
 
 
