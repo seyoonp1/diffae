@@ -68,6 +68,30 @@ class ImageDataset(Dataset):
             img = self.transform(img)
         return {'img': img, 'index': index}
 
+class PairedImageDataset(Dataset):
+    def __init__(self, root_dir, transform=None):
+        self.root_dir = root_dir
+        self.photo_dir = os.path.join(root_dir, 'photo')
+        self.sketch_dir = os.path.join(root_dir, 'sketch')
+        self.photo_list = sorted(os.listdir(self.photo_dir))
+        self.sketch_list = sorted(os.listdir(self.sketch_dir))
+        assert len(self.photo_list) == len(self.sketch_list), "Data mismatch!"
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.photo_list)
+
+    def __getitem__(self, idx):
+        photo_path = os.path.join(self.photo_dir, self.photo_list[idx])
+        sketch_path = os.path.join(self.sketch_dir, self.sketch_list[idx])
+        photo = Image.open(photo_path).convert('RGB')
+        sketch = Image.open(sketch_path).convert('RGB')
+
+        if self.transform:
+            photo = self.transform(photo)
+            sketch = self.transform(sketch)
+
+        return {'img': photo, 'sketch': sketch, 'index': idx}
 
 class SubsetDataset(Dataset):
     def __init__(self, dataset, size):
