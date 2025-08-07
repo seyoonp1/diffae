@@ -85,7 +85,7 @@ class TrainConfig(BaseConfig):
     latent_clip_sample: bool = False
     latent_beta_scheduler: str = 'linear'
     beta_scheduler: str = 'linear'
-    data_name: str = ''
+    data_name: str = 'custom'
     data_val_name: str = None
     diffusion_type: str = None
     dropout: float = 0.1
