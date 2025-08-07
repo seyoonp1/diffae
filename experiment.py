@@ -909,7 +909,7 @@ def train(conf: TrainConfig, model_ref, gpus, nodes=1, mode: str = 'train'):
         accelerator = None
     else:
         accelerator = 'ddp'
-        from pytorch_lightning.plugins import DDPPlugin
+        from lightning.pytorch.plugins import DDPPlugin
 
         # important for working with gradient checkpoint
         plugins.append(DDPPlugin(find_unused_parameters=False))
