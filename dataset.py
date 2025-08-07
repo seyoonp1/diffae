@@ -71,8 +71,8 @@ class ImageDataset(Dataset):
 class PairedImageDataset(Dataset):
     def __init__(self, root_dir, transform=None):
         self.root_dir = root_dir
-        self.photo_dir = os.path.join(root_dir, 'photo')
-        self.sketch_dir = os.path.join(root_dir, 'sketch')
+        self.photo_dir = os.path.join(root_dir, 'trainA')
+        self.sketch_dir = os.path.join(root_dir, 'trainB')
         self.photo_list = sorted(os.listdir(self.photo_dir))
         self.sketch_list = sorted(os.listdir(self.sketch_dir))
         assert len(self.photo_list) == len(self.sketch_list), "Data mismatch!"
