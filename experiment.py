@@ -886,7 +886,7 @@ def train(conf: TrainConfig, model_ref, gpus, nodes=1, mode: str = 'train'):
                                  save_top_k=1,
                                  every_n_train_steps=conf.save_every_samples //
                                  conf.batch_size_effective)
-    checkpoint_path = f'{conf.logdir}/last.ckpt'
+    checkpoint_path = '/content/drive/MyDrive/Colab Notebooks/portraitDAE_checkpoints/last.ckpt'
     print('ckpt path:', checkpoint_path)
     if os.path.exists(checkpoint_path):
         resume = checkpoint_path
