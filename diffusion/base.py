@@ -201,7 +201,7 @@ class GaussianDiffusionBeatGans:
         if noise is None:
             noise = th.randn_like(x_start)
 
-                """
+        """
         Custom training loss based on DDIM-reconstructed output vs ground truth.
         """
         if model_kwargs is None:
